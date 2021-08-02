@@ -9,6 +9,9 @@ The code consists of 2 files:
 The scraper.py file contains the main code that can be run to scraoe the data. The functions.py consists of all the function definitions and classes required by scraper.py
 The reason for having 2 scripts is to improve code readability and code testing. 
 
+The 'Project Brief.ipynb' includes the requirements of this project along with additional recommended functionalities. 
+The 'project_notebook.ipynb' was a  testing notebook used for unit testing different parts of the code. 
+
 ### Data
 The data is outputted into an excel file called output, with different sheets for different sources. The 3 sources used are:
 * Airliners (https://www.airliners.net/aircraft-data)
