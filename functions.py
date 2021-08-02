@@ -24,9 +24,13 @@ def save_dataset_as_xlsx(data_dict, output_filename, sheetname = 'Sheet1'):
     if os.path.exists(output_filename+".xlsx"):
         book = load_workbook(output_filename+".xlsx")
         writer = pd.ExcelWriter(output_filename+".xlsx", mode="a")
-
-        if sheetname not in book.sheetnames:
-            df.to_excel(writer, sheetname)
+        df.to_excel(writer, sheetname)
+        writer.save()
+        print()
+        print("here here")
+        print()
+        # if sheetname not in book.sheetnames:
+            
         book.close()
 
     else:
