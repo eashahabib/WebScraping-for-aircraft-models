@@ -11,6 +11,17 @@ import os.path
 from openpyxl import load_workbook
 
 def save_dataset_as_xlsx(data_dict, output_filename, sheetname = 'Sheet1'):
+    """The function saves the file ton an xlsx file in the current directory. 
+    
+    Parameters: 
+    data_dict (dict): dictionary of the data to be stored in the excel file
+    output_filename (str): name of the excel file, without the file extension
+    sheetname (str): name for the excel sheet
+    
+    Returns:
+    None (the data is stored in a excel file which should be visible in the folder) 
+    """
+
     df = pd.DataFrame(data_dict)
     if os.path.exists(output_filename+".xlsx"):
         book = load_workbook(output_filename+".xlsx")
@@ -27,6 +38,22 @@ def save_dataset_as_xlsx(data_dict, output_filename, sheetname = 'Sheet1'):
             df.to_excel(output_filename+".xlsx", sheet_name = sheetname)
 
 def save_to_sql(data1, table_name):
+    """The function saves the file to an sql database i.e. 
+    DATABASE_TYPE = 'postgresql'
+    DBAPI = 'psycopg2'
+    HOST = 'localhost'
+    USER = 'postgres'
+    PASSWORD = 'password'
+    DATABASE = 'Pagila'
+    PORT = 5432 
+    
+    Parameters: 
+    data1 (dict): dictionary of the data to be stored in the SQL table
+    table_name (str): name of the SQL table
+    
+    Returns:
+    None (the data is stored in the SQL table which should be visible in the database) 
+    """
     df = pd.DataFrame(data1)
 
     DATABASE_TYPE = 'postgresql'
@@ -41,13 +68,33 @@ def save_to_sql(data1, table_name):
     df.to_sql(table_name, engine, if_exists='replace')
 
 class Sources:
+    """The class contains information about sources and the data scraped from them. """
+
     def __init__(self, driver, *args):
+        """Initiliases an instance of Sources
+
+        Parameters:
+        args (tuple: str): args may contain any additional sources to be used
+
+        Returns:
+        self(Sources): an instance of sources
+
+        """
         # URLs of the original 4 sources used to build the dataset
         self.source_URL = ["https://www.airliners.net/aircraft-data", "https://www.risingup.com/planespecs/info/", "https://aircraftbluebook.com/Tools/ABB/ShowSpecifications.do", "https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?"]
         self.source_URL.extend(args)
         self.driver = driver
 
     def data_from_airliners(self):
+        """Scrapes data from airliners.net
+
+        Parameters:
+        self
+
+        Returns:
+        data_dict (dict): dictionary of data scraped from the corresponding source
+
+        """
         self.driver.get(self.source_URL[0])
 
         # Accept the cookies popup
@@ -78,6 +125,16 @@ class Sources:
         return data_dict
 
     def accept_cookies(self):
+        """Accepts cookies for airliners.net
+
+        Parameters:
+        self
+
+        Returns:
+        None
+
+        """
+        
         sleep(2)
         accept_cookies = self.driver.find_element_by_xpath('//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]')
 
@@ -87,6 +144,15 @@ class Sources:
 
 
     def data_from_aircraftbluebook(self):
+        """Scrapes data from aircraftbluebook
+
+        Parameters:
+        self
+
+        Returns:
+        data_dict (dict): dictionary of data scraped from the corresponding source
+
+        """
         self.driver.get(self.source_URL[2])
 
         data_dict_3 = {'Manufacturer': []}
@@ -121,6 +187,15 @@ class Sources:
 
 
     def data_from_contentzone(self):
+        """Scrapes data from contentzone
+
+        Parameters:
+        self
+
+        Returns:
+        data_dict (dict): dictionary of data scraped from the corresponding source
+
+        """
         self.driver.get(self.source_URL[3])
 
         data_dict_4 = {'Name': [], 'Manufacturer': [], 'Type': [], 'APC': [], 'WPC': [], 'RECAT-EU': [], 'Wing Span': [], 'Length': [], 'Height': [], 'Powerplant': [], 'Wing Position': [], 'Engine Position': [], 'Tail Position': [], 'Landing Gear': [], 'IATA': [], 'Accomodation': [], 'Notes': [], 'Alternative Names': [],}
