@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: aircraft-model-scraper
-Version: 0.0.5
+Version: 0.0.6
 Summary: This package scrapes difference websites online to create a comprehensive aircraft dataset
 Home-page: https://github.com/eashahabib/Webscraper-for-aircraft-models
 Author: Easha Habib

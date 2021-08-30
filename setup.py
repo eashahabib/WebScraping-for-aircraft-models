@@ -14,7 +14,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name = 'aircraft_model_scraper',
-    version = '0.0.5',
+    version = '0.0.6',
     description = 'This package scrapes difference websites online to create a comprehensive aircraft dataset',
     long_description=README,
     long_description_content_type="text/markdown",
