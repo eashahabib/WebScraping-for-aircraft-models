@@ -1,9 +1,7 @@
 requests
-bs4
-time
+beautifulsoup4
 pandas
 sqlalchemy
 tqdm
 selenium
 openpyxl
-dataclasses

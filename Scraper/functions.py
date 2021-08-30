@@ -75,6 +75,16 @@ def save_to_sql(data1, table_name):
 
 
 def set_up_Chrome(URL):
+    """This function is setting up the Chrome session. 
+    TODO: Make it more dynamic to allow it to start other drivers
+    
+    Parameters:
+    URL: URL of the webiste to open
+    
+    Returns:
+    driver (selenium.webdriver.chrome.webdriver.WebDriver): chromedriver
+    """
+
     print('Opening Chrome...')
     driver = webdriver.Chrome('chromedriver')
     
@@ -92,6 +102,7 @@ class Sources:
     - Helps keeps a consistent style across all the classes
     
     """
+
     driver: selenium.webdriver.chrome.webdriver.WebDriver
     data_dict: dict
 
@@ -102,29 +113,27 @@ class Sources:
         pass
 
     def housekeeping(self):
+        """Closes the driver at the end of the session, along with other housekeeping tasks. """
+
         self.driver.quit()
 
 
 @dataclass
 class Airliners(Sources):
+    """This class scrapes Airliners.net for data on aircraft models and stores it in a data dictionary. """
 
     def __init__(self):
         source_URL = "https://www.airliners.net/aircraft-data"
         self.driver = set_up_Chrome(source_URL)
+        self.accept_cookies()
 
     def get_data(self):
         """Scrapes data from airliners.net
 
-        Parameters:
-        self
-
         Returns:
-        data_dict (dict): dictionary of data scraped from the corresponding source
+        data_dict (dict): dictionary of data scraped from the source website
 
         """
-
-        # Accept the cookies popup
-        self.accept_cookies()
 
         self.get_urls()
 
@@ -136,6 +145,7 @@ class Airliners(Sources):
 
 
     def mine_data(self):
+        """Gets data from the urls stored in data_dict"""
         for link in self.data_dict['url']:
             sleep(1)
             self.driver.get(link)
@@ -146,6 +156,7 @@ class Airliners(Sources):
 
 
     def get_urls(self):
+        """Gets urls for all webpages and stores them in the data_dict"""
         
         all_data_sel = self.driver.find_elements_by_class_name("aircraftList")
 
@@ -160,19 +171,12 @@ class Airliners(Sources):
                 self.data_dict['Name'].append(item[0])
 
     def check_keys(self, elem):
+        """Add relevant keys with empty lists to the data_dict. """
         if elem.find_element_by_class_name('name').text not in self.data_dict.keys():
             self.data_dict[elem.find_element_by_class_name('name').text] = []
             
     def accept_cookies(self):
-        """Accepts cookies for airliners.net
-
-        Parameters:
-        self
-
-        Returns:
-        None
-
-        """
+        """Accepts cookies for airliners.net  """
         
         sleep(2)
         accept_cookies = self.driver.find_element_by_xpath('//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]')
@@ -184,6 +188,7 @@ class Airliners(Sources):
 
 @dataclass
 class Aircraftbluebook(Sources):
+    """This class scrapes aircraftbluebook.com for data on aircraft models and stores it in a data dictionary. """
 
     def __init__(self):
         source_URL = "https://aircraftbluebook.com/Tools/ABB/ShowSpecifications.do"
@@ -192,9 +197,6 @@ class Aircraftbluebook(Sources):
 
     def get_data(self):
         """Scrapes data from aircraftbluebook
-
-        Parameters:
-        self
 
         Returns:
         data_dict (dict): dictionary of data scraped from the corresponding source
@@ -209,6 +211,7 @@ class Aircraftbluebook(Sources):
         return self.data_dict
         
     def get_keys(self):
+        """Fills the data_dict with relevant keys and empty corresponding lists. """
         self.data_dict = {'Manufacturer': []}
 
         # Setting up dictionary keys
@@ -217,6 +220,8 @@ class Aircraftbluebook(Sources):
             self.data_dict[th.text] = []
 
     def get_table_rows(self):
+        """Extract the list of table rows for data to be extracted from"""
+
         tbodies = self.driver.find_elements_by_tag_name('table')
 
         for element in tbodies:
@@ -226,6 +231,7 @@ class Aircraftbluebook(Sources):
         return tbody
 
     def read_table(self):
+        """Extract data from the table"""
         manufacturer = ''
 
         for index, tr in enumerate(tqdm(self.get_table_rows())):
@@ -242,6 +248,7 @@ class Aircraftbluebook(Sources):
 
 @dataclass
 class Contentzone(Sources):
+    """This class scrapes contentzone.eurocontrol.int for data on aircraft models and stores it in a data dictionary. """
     def __init__(self):
         self.source_URL = "https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?"
         self.driver = set_up_Chrome(self.source_URL)
@@ -249,9 +256,6 @@ class Contentzone(Sources):
 
     def get_data(self):
         """Scrapes data from contentzone
-
-        Parameters:
-        self
 
         Returns:
         data_dict (dict): dictionary of data scraped from the corresponding source
@@ -268,10 +272,12 @@ class Contentzone(Sources):
         return self.data_dict
 
     def get_keys(self):
+        """Initialise the data_dict with relevant keys and id_list with column ids. """
         self.data_dict = {'ICAO': [], 'Name': [], 'Manufacturer': [], 'Type': [], 'APC': [], 'WPC': [], 'RECAT-EU': [], 'Wing Span': [], 'Length': [], 'Height': [], 'Powerplant': [], 'Wing Position': [], 'Engine Position': [], 'Tail Position': [], 'Landing Gear': [], 'IATA': [], 'Accomodation': [], 'Notes': [], 'Alternative Names': []}
         self.id_list = ["MainContent_wsAcftNameLabel", "MainContent_wsManufacturerLabel", "MainContent_wsTypeLabel", "MainContent_wsAPCLabel", "MainContent_wsWTCLabel", "MainContent_wsRecatEULabel", "MainContent_wsLabelWingSpan", "MainContent_wsLabelLength", "MainContent_wsLabelHeight", "MainContent_wsLabelPowerPlant", "MainContent_wsLabelWingPosition", "MainContent_wsLabelEngineData", "MainContent_wsLabelTailPosition", "MainContent_wsLabelLandingGear", "MainContent_wsIATACode", "MainContent_wsLabelAccommodation", "MainContent_wsLabelNotes", "MainContent_wsLabelAlternativeNames"]
 
     def get_plane_codes(self):
+        """Get the unique URL id for all aircrafts"""
         # FIXME: the range should be dynamic, rather than fixed
         for pg in tqdm(range(2,41)):
             tbody_0 = self.explore_page()
@@ -280,6 +286,11 @@ class Contentzone(Sources):
 
 
     def explore_page(self):
+        """Get data from the URLS collected. 
+        
+        Returns:
+
+        """
         tbody = self.driver.find_element_by_id('MainContent_wsBasicSearchGridView').find_elements_by_tag_name('tr')
 
         for tr in tbody[3:-2]:
@@ -288,6 +299,7 @@ class Contentzone(Sources):
         return tbody[0]
 
     def next_page(tbody_pos):
+        """Go to next page to collect data."""
         td_tags = tbody_pos.find_element_by_tag_name('tbody').find_elements_by_tag_name('td')
             
         for td in td_tags:
@@ -302,6 +314,7 @@ class Contentzone(Sources):
         sleep(1)
 
     def mine_data(self):
+        """Explore the URLs and extract data. """
         for i, icao in enumerate(tqdm(self.data_dict['ICAO'])):
             link = self.source_URL+f"ICAO={icao}"
             self.driver.get(link)
