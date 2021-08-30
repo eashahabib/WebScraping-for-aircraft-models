@@ -114,7 +114,7 @@ class Sources:
 
     def housekeeping(self):
         """Closes the driver at the end of the session, along with other housekeeping tasks. """
-
+        print('Closing browser...')
         self.driver.quit()
 
 
@@ -194,7 +194,6 @@ class Aircraftbluebook(Sources):
         source_URL = "https://aircraftbluebook.com/Tools/ABB/ShowSpecifications.do"
         self.driver = set_up_Chrome(source_URL)
 
-
     def get_data(self):
         """Scrapes data from aircraftbluebook
 
@@ -252,7 +251,7 @@ class Contentzone(Sources):
     def __init__(self):
         self.source_URL = "https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?"
         self.driver = set_up_Chrome(self.source_URL)
-        self.driver.fullscreen_window()
+        # self.driver.fullscreen_window()
 
     def get_data(self):
         """Scrapes data from contentzone
@@ -261,17 +260,20 @@ class Contentzone(Sources):
         data_dict (dict): dictionary of data scraped from the corresponding source
 
         """
+        print('Setting key ids')
         self.set_keys_ids()
 
         # Step 1: Collect list of aircrafts - total pages -> 39, total results -> 385 
+        print('Setting plane codes')
         self.get_plane_codes()
 
         # Step 2: Go over the 385 pages' links
+        print('endingggg')
         self.mine_data()
 
         return self.data_dict
 
-    def get_keys(self):
+    def set_keys_ids(self):
         """Initialise the data_dict with relevant keys and id_list with column ids. """
         self.data_dict = {'ICAO': [], 'Name': [], 'Manufacturer': [], 'Type': [], 'APC': [], 'WPC': [], 'RECAT-EU': [], 'Wing Span': [], 'Length': [], 'Height': [], 'Powerplant': [], 'Wing Position': [], 'Engine Position': [], 'Tail Position': [], 'Landing Gear': [], 'IATA': [], 'Accomodation': [], 'Notes': [], 'Alternative Names': []}
         self.id_list = ["MainContent_wsAcftNameLabel", "MainContent_wsManufacturerLabel", "MainContent_wsTypeLabel", "MainContent_wsAPCLabel", "MainContent_wsWTCLabel", "MainContent_wsRecatEULabel", "MainContent_wsLabelWingSpan", "MainContent_wsLabelLength", "MainContent_wsLabelHeight", "MainContent_wsLabelPowerPlant", "MainContent_wsLabelWingPosition", "MainContent_wsLabelEngineData", "MainContent_wsLabelTailPosition", "MainContent_wsLabelLandingGear", "MainContent_wsIATACode", "MainContent_wsLabelAccommodation", "MainContent_wsLabelNotes", "MainContent_wsLabelAlternativeNames"]
@@ -298,7 +300,7 @@ class Contentzone(Sources):
 
         return tbody[0]
 
-    def next_page(tbody_pos):
+    def next_page(self, tbody_pos):
         """Go to next page to collect data."""
         td_tags = tbody_pos.find_element_by_tag_name('tbody').find_elements_by_tag_name('td')
             
