@@ -1,0 +1,9 @@
+requests
+bs4
+time
+pandas
+sqlalchemy
+tqdm
+selenium
+openpyxl
+dataclasses

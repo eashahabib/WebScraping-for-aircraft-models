@@ -1,0 +1,23 @@
+from os import name
+from setuptools import setup
+from setuptools import find_packages
+
+
+# # The directory containing this file
+# HERE = pathlib.Path(__file__).parent
+
+# # The text of the README file
+# README = (HERE / "README.md").read_text()
+
+# This call to setup() does all the work
+
+setup(
+    name = 'aircraft_model_scraper',
+    version = '0.0.1',
+    description = 'This package scrapes difference websites online to create a comprehensive aircraft dataset',
+    url = 'https://github.com/eashahabib/Webscraper-for-aircraft-models',
+    author = 'Easha Habib',
+    license = 'MIT',
+    packages = find_packages(),
+    install_requires = ['requests', 'bs4', 'time', 'pandas', 'sqlalchemy', 'tqdm', 'selenium', 'openpyxl', 'dataclasses'],
+)

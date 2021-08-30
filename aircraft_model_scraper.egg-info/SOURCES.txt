@@ -1,0 +1,8 @@
+README.md
+setup.cfg
+setup.py
+aircraft_model_scraper.egg-info/PKG-INFO
+aircraft_model_scraper.egg-info/SOURCES.txt
+aircraft_model_scraper.egg-info/dependency_links.txt
+aircraft_model_scraper.egg-info/requires.txt
+aircraft_model_scraper.egg-info/top_level.txt
